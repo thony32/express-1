@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const authRoutes = require("./Routes/authRoutes");
+const routes = require("./src/routes/routes");
 const cors = require('cors');
 
 const app = express();
@@ -21,4 +21,4 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 app.use(cors());
-app.use("/api", authRoutes);
+app.use("/api", routes);
