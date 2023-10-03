@@ -2,8 +2,8 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const secretKey = "your-secret-key";
-
+const secretKey = process.env.SECRET_KEY;
+// * Handle user NORMAL sign up
 const signup = async (req, res) => {
   try {
     const { username, email, full_name, password } = req.body;
@@ -31,8 +31,9 @@ const signup = async (req, res) => {
     console.error("Signup failed:", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
-};
+}
 
+// * Handle user NORMAL Login 
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -50,7 +51,11 @@ const login = async (req, res) => {
     console.error("Login failed:", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
-};
+}
+
+// TODO: Handle Google Authentication
+
+
 
 module.exports = {
   signup,
