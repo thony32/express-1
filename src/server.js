@@ -7,7 +7,7 @@ const errorHandler = require("./utils/errorHandler")
 const apiRoutes = require("./routes/apiRoutes")
 const authenticationRoutes = require("./routes/authenticationRoutes")
 const dashboardRoutes = require("./routes/dashboardRoutes")
-const profileRoutes = require("./routes/profileRoutes")
+// const profileRoutes = require("./routes/profileRoutes")
 
 // Initialisation d'Express
 const app = express()
@@ -25,7 +25,7 @@ app.use(cors())
 app.use("/api", apiRoutes)
 app.use("/auth", authenticationRoutes)
 app.use("/dashboard", dashboardRoutes)
-app.use("/profile", profileRoutes)
+// app.use("/profile", profileRoutes)
 
 // Gestion des erreurs
 app.use(errorHandler)
