@@ -1,21 +1,21 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose")
 
 const applicationSchema = new mongoose.Schema({
   version: {
     type: String,
-    required: true
+    required: true,
   },
   downloadLink: {
     type: String,
-    required: true
+    required: true,
   },
   releaseDate: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   description: {
-    type: String
+    type: String,
   },
-});
+})
 
-module.exports = mongoose.model('Application', applicationSchema);
+module.exports = mongoose.model("Application", applicationSchema)

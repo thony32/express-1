@@ -1,38 +1,38 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/userModel');
+const jwt = require("jsonwebtoken")
+const User = require("../models/userModel")
 
 const protect = async (req, res, next) => {
-  let token;
+  let token
 
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
     try {
       // Extraire le token du header
-      token = req.headers.authorization.split(' ')[1];
+      token = req.headers.authorization.split(" ")[1]
 
       // Vérifier le token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
       // Récupérer les informations de l'utilisateur à partir du token
-      req.user = await User.findById(decoded.id).select('-password');
+      req.user = await User.findById(decoded.id).select("-password")
 
-      next();
+      next()
     } catch (error) {
-      res.status(401).json({ message: "Non autorisé, token invalide" });
+      res.status(401).json({ message: "Non autorisé, token invalide" })
     }
   }
 
   if (!token) {
-    res.status(401).json({ message: "Non autorisé, pas de token" });
+    res.status(401).json({ message: "Non autorisé, pas de token" })
   }
-};
+}
 
 const authorize = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ message: `L'utilisateur n'est pas autorisé pour ce rôle: ${roles}` });
+      return res.status(403).json({ message: `L'utilisateur n'est pas autorisé pour ce rôle: ${roles}` })
     }
-    next();
-  };
-};
+    next()
+  }
+}
 
-module.exports = { protect, authorize };
+module.exports = { protect, authorize }
