@@ -1,32 +1,52 @@
 const mongoose = require("mongoose")
-const Schema = mongoose.Schema
+const bcrypt = require("bcryptjs")
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
     unique: true,
+    trim: true,
   },
   email: {
     type: String,
     required: true,
     unique: true,
+    lowercase: true,
+    trim: true,
   },
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  password: { type: String, required: true },
-  createdDate: { type: Date, default: Date.now },
+  fullName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 })
 
-userSchema.set("toJSON", {
-  virtuals: true,
-  versionKey: false,
-  transform: function (doc, ret) {
-    delete ret._id
-    delete ret.password
-  },
+// Middleware pour hacher le mot de passe avant de sauvegarder l'utilisateur
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next()
+
+  // Hachage du mot de passe avec un sel
+  this.password = await bcrypt.hash(this.password, 12)
+  next()
 })
 
-const userModel = mongoose.model("userModel", userSchema)
+// Méthode pour comparer le mot de passe haché avec un mot de passe non haché
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password)
+}
 
-module.exports = userModel
+module.exports = mongoose.model("User", userSchema)

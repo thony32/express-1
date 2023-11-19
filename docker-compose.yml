@@ -22,6 +22,8 @@ services:
     environment:
       - ME_CONFIG_MONGODB_ADMINUSERNAME=mongoadmin
       - ME_CONFIG_MONGODB_ADMINPASSWORD=zerovalo
+      - ME_CONFIG_BASICAUTH_USERNAME=root
+      - ME_CONFIG_BASICAUTH_PASSWORD=zerovalo
       - ME_CONFIG_MONGODB_SERVER=mongo
     ports:
       - "8081:8081"
