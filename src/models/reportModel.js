@@ -1,9 +1,9 @@
 const db = require("../utils/databaseConnection")
 
 const createReport = async (reportData) => {
-  const { subject, description, reportedBy, reportDate, status } = reportData
-  const sql = `INSERT INTO reports (subject, description, reportedBy, reportDate, status) VALUES (?, ?, ?, ?, ?)`
-  await db.execute(sql, [subject, description, reportedBy, reportDate, status])
+  const { subject, description, reportedBy, reportDate } = reportData
+  const sql = `INSERT INTO reports (subject, description, reportedBy, reportDate) VALUES (?, ?, ?, ?)`
+  await db.execute(sql, [subject, description, reportedBy, reportDate])
 }
 
 const getAllReports = async () => {
