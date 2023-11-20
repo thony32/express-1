@@ -9,6 +9,7 @@ var Users = function (users) {
   this.fullName = users.fullName
   this.password = users.password
   this.role = users.role
+  this.createdAt = users.createdAt
 }
 
 // const createUser = async (userData) => {
