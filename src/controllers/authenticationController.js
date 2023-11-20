@@ -59,4 +59,4 @@ const login = async (req, res) => {
 //   // ... Logique pour réinitialisation de mot de passe
 // };
 
-module.exports = { register, login, forgotPassword, resetPassword }
+module.exports = { register, login }

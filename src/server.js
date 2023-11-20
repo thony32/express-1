@@ -5,8 +5,6 @@ const errorHandler = require("./utils/errorHandler")
 
 // Importation des routes
 const apiRoutes = require("./routes/apiRoutes")
-const authenticationRoutes = require("./routes/authenticationRoutes")
-const dashboardRoutes = require("./routes/dashboardRoutes")
 // const profileRoutes = require("./routes/profileRoutes")
 
 // Initialisation d'Express
@@ -23,8 +21,6 @@ app.use(cors())
 
 // Utilisation des routes
 app.use("/api", apiRoutes)
-app.use("/auth", authenticationRoutes)
-app.use("/dashboard", dashboardRoutes)
 // app.use("/profile", profileRoutes)
 
 // Gestion des erreurs
