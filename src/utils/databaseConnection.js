@@ -4,7 +4,7 @@ const databaseConnection = async () => {
   try {
     const connection = await mysql.createConnection({
       host: process.env.MYSQL_HOST,
-      user: process.env.MYSQL_USER,
+      user: 'root',
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DB,
     })
