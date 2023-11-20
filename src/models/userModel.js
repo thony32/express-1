@@ -1,9 +1,9 @@
 const db = require("../utils/databaseConnection")
 
 const createUser = async (userData) => {
-  const { username, email, fullName, password } = userData
-  const sql = `INSERT INTO users (username, email, fullName, password) VALUES (?, ?, ?, ?)`
-  await db.execute(sql, [username, email, fullName, password])
+  const { username, email, fullName, password , role } = userData
+  const sql = `INSERT INTO users (username, email, fullName, password , role) VALUES (?, ?, ?, ?)`
+  await db.execute(sql, [username, email, fullName, password , role])
 }
 
 const updateUser = async (userId, updateData) => {
