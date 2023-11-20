@@ -1,85 +1,59 @@
-const User = require("../models/userModel")
 const bcrypt = require("bcryptjs")
+const userModel = require("../models/userModel")
 
-// Création d'un nouvel utilisateur (par un administrateur, par exemple)
 const createUser = async (req, res) => {
+  const { username, email, fullName, password } = req.body
+  const hashedPassword = await bcrypt.hash(password, 12)
+
   try {
-    const { username, email, password } = req.body
-
-    // Hashage du mot de passe
-    const hashedPassword = await bcrypt.hash(password, 12)
-
-    const newUser = new User({
-      username,
-      email,
-      password: hashedPassword,
-    })
-
-    await newUser.save()
-
-    res.status(201).json({ message: "Utilisateur créé avec succès." })
+    await userModel.createUser({ username, email, fullName, hashedPassword })
+    res.status(201).json({ message: "Utilisateur créé avec succès" })
   } catch (error) {
-    res.status(500).json({ message: "Erreur lors de la création de l'utilisateur." })
+    res.status(500).json({ message: "Erreur lors de la création de l'utilisateur" })
   }
 }
 
-// Mise à jour d'un utilisateur
 const updateUser = async (req, res) => {
+  const userId = req.params.id
+  const { username, email, fullName, password } = req.body
+  const hashedPassword = await bcrypt.hash(password, 12)
+
   try {
-    const { userId } = req.params
-    const { username, email, password } = req.body
-
-    const updateData = {
-      username,
-      email,
-      ...(password && { password: await bcrypt.hash(password, 12) }),
-    }
-
-    const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true })
-
-    res.status(200).json({ message: "Utilisateur mis à jour avec succès.", updatedUser })
+    await userModel.updateUser(userId, { username, email, fullName, hashedPassword })
+    res.status(200).json({ message: "Utilisateur mis à jour avec succès" })
   } catch (error) {
-    res.status(500).json({ message: "Erreur lors de la mise à jour de l'utilisateur." })
+    res.status(500).json({ message: "Erreur lors de la mise à jour de l'utilisateur" })
   }
 }
 
-// Suppression d'un utilisateur
 const deleteUser = async (req, res) => {
+  const userId = req.params.id
+
   try {
-    const { userId } = req.params
-
-    await User.findByIdAndDelete(userId)
-
-    res.status(200).json({ message: "Utilisateur supprimé avec succès." })
+    await userModel.deleteUser(userId)
+    res.status(200).json({ message: "Utilisateur supprimé avec succès" })
   } catch (error) {
-    res.status(500).json({ message: "Erreur lors de la suppression de l'utilisateur." })
+    res.status(500).json({ message: "Erreur lors de la suppression de l'utilisateur" })
   }
 }
 
-// Consultation d'un utilisateur
 const getUser = async (req, res) => {
+  const userId = req.params.id
+
   try {
-    const { userId } = req.params
-
-    const user = await User.findById(userId)
-    if (!user) {
-      return res.status(404).json({ message: "Utilisateur non trouvé." })
-    }
-
+    const user = await userModel.getUser(userId)
     res.status(200).json(user)
   } catch (error) {
-    res.status(500).json({ message: "Erreur lors de la récupération de l'utilisateur." })
+    res.status(500).json({ message: "Erreur lors de la récupération de l'utilisateur" })
   }
 }
 
-// Listage de tous les utilisateurs
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find()
-
+    const users = await userModel.getAllUsers()
     res.status(200).json(users)
   } catch (error) {
-    res.status(500).json({ message: "Erreur lors de la récupération des utilisateurs." })
+    res.status(500).json({ message: "Erreur lors de la récupération des utilisateurs" })
   }
 }
 

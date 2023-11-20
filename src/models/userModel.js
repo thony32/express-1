@@ -1,52 +1,38 @@
-const mongoose = require("mongoose")
-const bcrypt = require("bcryptjs")
+const db = require("../utils/databaseConnection")
 
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true,
-  },
-  fullName: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  role: {
-    type: String,
-    enum: ["user", "admin"],
-    default: "user",
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-})
-
-// Middleware pour hacher le mot de passe avant de sauvegarder l'utilisateur
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next()
-
-  // Hachage du mot de passe avec un sel
-  this.password = await bcrypt.hash(this.password, 12)
-  next()
-})
-
-// Méthode pour comparer le mot de passe haché avec un mot de passe non haché
-userSchema.methods.comparePassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password)
+const createUser = async (userData) => {
+  const { username, email, fullName, password } = userData
+  const sql = `INSERT INTO users (username, email, fullName, password) VALUES (?, ?, ?, ?)`
+  await db.execute(sql, [username, email, fullName, password])
 }
 
-module.exports = mongoose.model("User", userSchema)
+const updateUser = async (userId, updateData) => {
+  const { username, email, fullName, password } = updateData
+  const sql = `UPDATE users SET username = ?, email = ?, fullName = ?, password = ? WHERE id = ?`
+  await db.execute(sql, [username, email, fullName, password, userId])
+}
+
+const deleteUser = async (userId) => {
+  const sql = `DELETE FROM users WHERE id = ?`
+  await db.execute(sql, [userId])
+}
+
+const getUser = async (userId) => {
+  const sql = `SELECT * FROM users WHERE id = ?`
+  const [rows] = await db.execute(sql, [userId])
+  return rows[0]
+}
+
+const getAllUsers = async () => {
+  const sql = `SELECT * FROM users`
+  const [rows] = await db.execute(sql)
+  return rows
+}
+
+module.exports = {
+  createUser,
+  updateUser,
+  deleteUser,
+  getUser,
+  getAllUsers,
+}

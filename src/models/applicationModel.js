@@ -1,21 +1,26 @@
-const mongoose = require("mongoose")
+const db = require("../utils/databaseConnection")
 
-const applicationSchema = new mongoose.Schema({
-  version: {
-    type: String,
-    required: true,
-  },
-  downloadLink: {
-    type: String,
-    required: true,
-  },
-  releaseDate: {
-    type: Date,
-    default: Date.now,
-  },
-  description: {
-    type: String,
-  },
-})
+const uploadApplication = async (applicationData) => {
+  const { version, downloadLink, description } = applicationData
+  const releaseDate = new Date() // ou utilisez une date fournie
+  const sql = `INSERT INTO applications (version, downloadLink, releaseDate, description) VALUES (?, ?, ?, ?)`
+  await db.execute(sql, [version, downloadLink, releaseDate, description])
+}
 
-module.exports = mongoose.model("Application", applicationSchema)
+const getApplication = async (applicationId) => {
+  const sql = `SELECT * FROM applications WHERE id = ?`
+  const [rows] = await db.execute(sql, [applicationId])
+  return rows[0]
+}
+
+const downloadApplication = async (applicationId) => {
+  const sql = `SELECT downloadLink FROM applications WHERE id = ?`
+  const [rows] = await db.execute(sql, [applicationId])
+  return rows[0]?.downloadLink
+}
+
+module.exports = {
+  uploadApplication,
+  getApplication,
+  downloadApplication,
+}

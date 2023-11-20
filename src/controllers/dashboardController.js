@@ -1,14 +1,15 @@
-const User = require("../models/userModel")
-const Report = require("../models/reportModel")
-const Application = require("../models/applicationModel")
+const userModel = require("../models/userModel")
+const reportModel = require("../models/reportModel")
+const applicationModel = require("../models/applicationModel")
 
 const getDashboardStats = async (req, res) => {
   try {
-    // Récupérer des statistiques, par exemple, le nombre d'utilisateurs et de rapports
-    const userCount = await User.countDocuments()
-    const reportCount = await Report.countDocuments()
+    // Récupérer des statistiques, par exemple, le nombre d'utilisateurs, de rapports et d'applications
+    const userCount = await userModel.countUsers()
+    const reportCount = await reportModel.countReports()
+    const applicationCount = await applicationModel.countApplications()
 
-    res.status(200).json({ userCount, reportCount })
+    res.status(200).json({ userCount, reportCount, applicationCount })
   } catch (error) {
     res.status(500).json({ message: "Erreur lors de la récupération des statistiques." })
   }
@@ -16,8 +17,8 @@ const getDashboardStats = async (req, res) => {
 
 const manageUsers = async (req, res) => {
   try {
-    // TODO: Logique pour gérer les utilisateurs (liste, modification, suppression)
-    const users = await User.find()
+    // Logique pour gérer les utilisateurs (liste, modification, suppression)
+    const users = await userModel.getAllUsers()
     res.status(200).json(users)
   } catch (error) {
     res.status(500).json({ message: "Erreur lors de la gestion des utilisateurs." })
@@ -29,7 +30,8 @@ const updateAdminProfile = async (req, res) => {
     const { adminId, updateData } = req.body // Id de l'admin et les données à mettre à jour
 
     // Mise à jour du profil de l'administrateur
-    const updatedAdmin = await User.findByIdAndUpdate(adminId, updateData, { new: true })
+    await userModel.updateUser(adminId, updateData)
+    const updatedAdmin = await userModel.getUser(adminId)
 
     res.status(200).json(updatedAdmin)
   } catch (error) {

@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken")
-const User = require("../models/userModel")
+const userModel = require("../models/userModel")
 
 const protect = async (req, res, next) => {
   let token
@@ -13,7 +13,12 @@ const protect = async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
       // Récupérer les informations de l'utilisateur à partir du token
-      req.user = await User.findById(decoded.id).select("-password")
+      req.user = await userModel.getUser(decoded.id)
+
+      // Exclure le mot de passe des informations de l'utilisateur
+      if (req.user) {
+        delete req.user.password
+      }
 
       next()
     } catch (error) {

@@ -1,64 +1,53 @@
-const Report = require("../models/reportModel")
+const reportModel = require("../models/reportModel")
 
-// Créer un nouveau rapport
 const createReport = async (req, res) => {
-  try {
-    const { subject, description, reportedBy } = req.body
-    const newReport = new Report({ subject, description, reportedBy })
+  const { subject, description, reportedBy, reportDate, status } = req.body
 
-    const savedReport = await newReport.save()
-    res.status(201).json(savedReport)
+  try {
+    await reportModel.createReport({ subject, description, reportedBy, reportDate, status })
+    res.status(201).json({ message: "Rapport créé avec succès" })
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: "Erreur lors de la création du rapport" })
   }
 }
 
-// Obtenir tous les rapports
 const getAllReports = async (req, res) => {
   try {
-    const reports = await Report.find()
-    res.json(reports)
+    const reports = await reportModel.getAllReports()
+    res.status(200).json(reports)
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: "Erreur lors de la récupération des rapports" })
   }
 }
 
-// Obtenir un rapport spécifique par son ID
 const getReport = async (req, res) => {
+  const reportId = req.params.id
+
   try {
-    const report = await Report.findById(req.params.reportId)
+    const report = await reportModel.getReport(reportId)
     if (!report) {
-      res.status(404).json({ message: "Rapport non trouvé." })
-      return
+      return res.status(404).json({ message: "Rapport non trouvé" })
     }
-    res.json(report)
+    res.status(200).json(report)
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: "Erreur lors de la récupération du rapport" })
   }
 }
 
-// Mettre à jour un rapport
-const updateReport = async (req, res) => {
-  try {
-    const updatedReport = await Report.findByIdAndUpdate(req.params.reportId, req.body, { new: true })
-    res.json(updatedReport)
-  } catch (error) {
-    res.status(500).json({ message: error.message })
-  }
-}
-
-// Supprimer un rapport
 const deleteReport = async (req, res) => {
+  const reportId = req.params.id
+
   try {
-    const report = await Report.findByIdAndDelete(req.params.reportId)
-    if (!report) {
-      res.status(404).json({ message: "Rapport non trouvé." })
-      return
-    }
-    res.json({ message: "Rapport supprimé avec succès." })
+    await reportModel.deleteReport(reportId)
+    res.status(200).json({ message: "Rapport supprimé avec succès" })
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: "Erreur lors de la suppression du rapport" })
   }
 }
 
-module.exports = { createReport, getAllReports, getReport, updateReport, deleteReport }
+module.exports = {
+  createReport,
+  getAllReports,
+  getReport,
+  deleteReport,
+}

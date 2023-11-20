@@ -1,29 +1,31 @@
-const mongoose = require("mongoose")
+const db = require("../utils/databaseConnection")
 
-const reportSchema = new mongoose.Schema({
-  subject: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  reportedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  reportDate: {
-    type: Date,
-    default: Date.now,
-  },
-  status: {
-    type: String,
-    enum: ["Open", "In Review", "Resolved", "Closed"],
-    default: "Open",
-  },
-})
+const createReport = async (reportData) => {
+  const { subject, description, reportedBy, reportDate, status } = reportData
+  const sql = `INSERT INTO reports (subject, description, reportedBy, reportDate, status) VALUES (?, ?, ?, ?, ?)`
+  await db.execute(sql, [subject, description, reportedBy, reportDate, status])
+}
 
-module.exports = mongoose.model("Report", reportSchema)
+const getAllReports = async () => {
+  const sql = `SELECT * FROM reports`
+  const [rows] = await db.execute(sql)
+  return rows
+}
+
+const getReport = async (reportId) => {
+  const sql = `SELECT * FROM reports WHERE id = ?`
+  const [rows] = await db.execute(sql, [reportId])
+  return rows[0]
+}
+
+const deleteReport = async (reportId) => {
+  const sql = `DELETE FROM reports WHERE id = ?`
+  await db.execute(sql, [reportId])
+}
+
+module.exports = {
+  createReport,
+  getAllReports,
+  getReport,
+  deleteReport,
+}

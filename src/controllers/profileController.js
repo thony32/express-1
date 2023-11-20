@@ -1,18 +1,17 @@
-const User = require("../models/userModel")
+const userModel = require("../models/userModel")
 const bcrypt = require("bcryptjs")
 
 const getUserProfile = async (req, res) => {
   try {
-    // L'ID de l'utilisateur est normalement récupéré via la session ou le token JWT
-    const userId = req.userId
+    const userId = req.userId // L'ID de l'utilisateur est normalement récupéré via la session ou le token JWT
 
-    const user = await User.findById(userId)
+    const user = await userModel.getUser(userId)
     if (!user) {
       return res.status(404).json({ message: "Utilisateur non trouvé." })
     }
 
     // Ne pas envoyer le mot de passe
-    const { password, ...otherDetails } = user._doc
+    const { password, ...otherDetails } = user
 
     res.status(200).json(otherDetails)
   } catch (error) {
@@ -34,10 +33,11 @@ const updateUserProfile = async (req, res) => {
       ...(hashedPassword && { password: hashedPassword }),
     }
 
-    const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true })
+    await userModel.updateUser(userId, updateData)
 
-    // Ne pas envoyer le mot de passe mis à jour
-    const { password: _, ...updatedDetails } = updatedUser._doc
+    // Récupérer les détails mis à jour (sans le mot de passe)
+    const updatedUser = await userModel.getUser(userId)
+    const { password: _, ...updatedDetails } = updatedUser
 
     res.status(200).json(updatedDetails)
   } catch (error) {

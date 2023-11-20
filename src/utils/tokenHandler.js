@@ -11,6 +11,5 @@ const generateToken = (id) => {
 const verifyToken = (token) => {
   return jwt.verify(token, process.env.JWT_SECRET)
 }
-// TODO: Vérification email pendant récupération mot de passe
 
 module.exports = { generateToken, verifyToken }
