@@ -1,6 +1,5 @@
 const express = require("express")
 const cors = require("cors")
-const databaseConnection = require("./utils/databaseConnection")
 const errorHandler = require("./utils/errorHandler")
 
 // Importation des routes
@@ -10,8 +9,6 @@ const apiRoutes = require("./routes/apiRoutes")
 // Initialisation d'Express
 const app = express()
 
-// Connexion à la base de données
-databaseConnection()
 
 // Middleware pour parser les requêtes JSON
 app.use(express.json())
@@ -27,5 +24,5 @@ app.use("/api", apiRoutes)
 app.use(errorHandler)
 
 // Démarrage du serveur
-const PORT = process.env.PORT || 5000
+const PORT = 4000
 app.listen(PORT, () => console.log(`Serveur lancé sur le port ${PORT}`))
