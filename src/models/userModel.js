@@ -1,5 +1,8 @@
 "use strict"
 const db = require("../utils/databaseConnection")
+const bcrypt = require("bcrypt")
+const jwt = require('jsonwebtoken')
+require("dotenv").config()
 
 // * attributs user
 var Users = function (users) {
@@ -12,11 +15,81 @@ var Users = function (users) {
   this.createdAt = users.createdAt
 }
 
+Users.login = function (email, password, result) {
+  const sql = "SELECT * FROM users WHERE email = ?"
+  db.query(sql, [email], function (err, res) {
+    if (err) {
+      console.log("error: ", err)
+      result(err, null)
+    } else if (res.length) {
+      // Comparer le mot de passe haché avec celui fourni
+      bcrypt.compare(password, res[0].password, function (err, isMatch) {
+        if (isMatch && !err) {
+          const token = jwt.sign({ id: res[0].id }, process.env.SECRET_KEY, { expiresIn: "24h" })
+          result(null, { ...res[0], token })
+        } else {
+          result("Authentication failed. Wrong password.", null)
+        }
+      })
+    } else {
+      result("Authentication failed. User not found.", null)
+    }
+  })
+}
+
+Users.register = function (newUser, result) {
+  // Hacher le mot de passe avant de l'enregistrer dans la base de données
+  bcrypt.hash(newUser.password, 10, function (err, hash) {
+    if (err) {
+      return result(err, null)
+    }
+    newUser.password = hash
+
+    // Insérer l'utilisateur dans la base de données
+    const sql = "INSERT INTO users SET ?"
+    db.query(sql, newUser, function (err, res) {
+      if (err) {
+        console.log("error: ", err)
+        result(err, null)
+      } else {
+        const token = jwt.sign({ id: res.insertId }, process.env.SECRET_KEY, { expiresIn: "24h" })
+        result(null, { id: res.insertId, token })
+      }
+    })
+  })
+}
+
+Users.createUser = function (newUser, result) {
+  const sql = "INSERT INTO users (username, email, fullName, password , role) VALUES (?, ?, ?, ?, ?)"
+  db.query(sql, [newUser.username, newUser.email, newUser.fullName, newUser.password, newUser.role], function (err, res) {
+    if (err) {
+      console.log("error: ", err)
+      result(err, null)
+    } else {
+      console.log("new user created: ", res.insertId)
+      result(null, res.insertId)
+    }
+  })
+}
+
 // const createUser = async (userData) => {
 //   const { username, email, fullName, password, role } = userData
 //   const sql = `INSERT INTO users (username, email, fullName, password , role) VALUES (?, ?, ?, ? , ?)`
 //   await db.execute(sql, [username, email, fullName, password, role])
 // }
+
+Users.updateUser = function (userId, user, result) {
+  const sql = "UPDATE users SET username = ?, email = ?, fullName = ?, password = ?, role = ?, createdAt = ? WHERE id = ?"
+  db.query(sql, [user.username, user.email, user.fullName, user.password, user.role, user.createdAt, userId], function (err, res) {
+    if (err) {
+      console.log("error: ", err)
+      result(null, err)
+    } else {
+      console.log("user updated: ", userId)
+      result(null, res)
+    }
+  })
+}
 
 // const updateUser = async (userId, updateData) => {
 //   const { username, email, fullName, password } = updateData
@@ -24,10 +97,36 @@ var Users = function (users) {
 //   await db.execute(sql, [username, email, fullName, password, userId])
 // }
 
+Users.deleteUser = function (userId, result) {
+  const sql = "DELETE FROM users WHERE id = ?"
+  db.query(sql, [userId], function (err, res) {
+    if (err) {
+      console.log("error: ", err)
+      result(null, err)
+    } else {
+      console.log("user deleted: ", userId)
+      result(null, res)
+    }
+  })
+}
+
 // const deleteUser = async (userId) => {
 //   const sql = `DELETE FROM users WHERE id = ?`
 //   await db.execute(sql, [userId])
 // }
+
+Users.getUser = function (userId, result) {
+  const sql = "SELECT * FROM users WHERE id = ?"
+  db.query(sql, [userId], function (err, res) {
+    if (err) {
+      console.log("error: ", err)
+      result(err, null)
+    } else {
+      console.log("found user: ", res)
+      result(null, res)
+    }
+  })
+}
 
 // const getUser = async (userId) => {
 //   const sql = `SELECT * FROM users WHERE id = ?`
@@ -47,5 +146,6 @@ Users.getAllUsers = function (result) {
     }
   })
 }
+
 
 module.exports = Users
