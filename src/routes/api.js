@@ -12,7 +12,6 @@ router.get("/reports/:reportId", reportController.getReport)
 // Routes pour les utilisateurs
 router.post("/users", userController.createUser)
 router.post("/login", userController.login)
-router.post("/register", userController.register)
 router.get("/user/:username", userController.getUser)
 router.get("/users", userController.getAllUsers)
 
