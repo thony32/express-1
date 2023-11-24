@@ -1,7 +1,7 @@
 "use strict"
 const db = require("../utils/databaseConnection")
 const bcrypt = require("bcrypt")
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken")
 require("dotenv").config()
 
 // * attributs user
@@ -146,6 +146,5 @@ Users.getAllUsers = function (result) {
     }
   })
 }
-
 
 module.exports = Users

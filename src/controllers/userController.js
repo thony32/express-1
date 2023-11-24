@@ -56,8 +56,6 @@
 // }
 const Users = require("../models/userModel")
 
-
-
 exports.createUser = function (req, res) {
   let newUser = new Users(req.body)
   Users.createUser(newUser, function (err, user) {
