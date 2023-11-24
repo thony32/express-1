@@ -9,7 +9,7 @@ exports.createUser = function (req, res) {
 }
 
 exports.getUser = function (req, res) {
-  Users.getUser(req.params.id, function (err, user) {
+  Users.getUser(req.params.userId, function (err, user) {
     if (err) res.send(err)
     res.json(user)
   })

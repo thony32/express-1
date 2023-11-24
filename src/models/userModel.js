@@ -83,6 +83,7 @@ Users.getUser = function (userId, result) {
 }
 
 // NOTE: Get all users done
+
 Users.getAllUsers = function (result) {
   const sql = "SELECT * FROM users"
   db.query(sql, function (err, res) {
