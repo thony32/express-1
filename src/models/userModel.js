@@ -108,14 +108,15 @@ Users.deleteUser = function (userId, result) {
 //   await db.execute(sql, [userId])
 // }
 
-Users.getUser = function (userId, result) {
-  const sql = "SELECT * FROM users WHERE id = ?"
-  db.query(sql, [userId], function (err, res) {
+Users.getUser = function (username, result) {
+  const sql = "SELECT * FROM users WHERE username LIKE ?"
+  const patternUsername = `%${username}%`
+  db.query(sql, [patternUsername], function (err, res) {
     if (err) {
       console.log("error: ", err)
       result(err, null)
     } else {
-      console.log("found user: ", res)
+      console.log("user: ", res)
       result(null, res)
     }
   })
