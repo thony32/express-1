@@ -3,7 +3,7 @@ const cors = require("cors")
 const errorHandler = require("./utils/errorHandler")
 
 // Importation des routes
-const apiRoutes = require("./routes/apiRoutes")
+const apiRoutes = require("./routes/api")
 // const profileRoutes = require("./routes/profileRoutes")
 
 // Initialisation d'Express
