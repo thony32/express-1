@@ -1,7 +1,6 @@
 "use strict"
 const db = require("../utils/databaseConnection")
 const bcrypt = require("bcrypt")
-const jwt = require("jsonwebtoken")
 require("dotenv").config()
 
 // * attributs user
@@ -15,47 +14,35 @@ var Users = function (users) {
   this.createdAt = users.createdAt
 }
 
-Users.login = function (email, password, result) {
-  const sql = "SELECT * FROM users WHERE email = ?"
-  db.query(sql, [email], function (err, res) {
+Users.login = function (usernameOrEmail, password, result) {
+  const sql = "SELECT * FROM users WHERE username = ? OR email = ?"
+  db.query(sql, [usernameOrEmail, usernameOrEmail], function (err, rows) {
     if (err) {
-      console.log("error: ", err)
+      console.error("Error retrieving user:", err)
       result(err, null)
-    } else if (res.length) {
-      // Comparer le mot de passe haché avec celui fourni
-      bcrypt.compare(password, res[0].password, function (err, isMatch) {
-        if (isMatch && !err) {
-          const token = jwt.sign({ id: res[0].id }, process.env.SECRET_KEY, { expiresIn: "24h" })
-          result(null, { ...res[0], token })
-        } else {
-          result("Authentication failed. Wrong password.", null)
-        }
-      })
     } else {
-      result("Authentication failed. User not found.", null)
-    }
-  })
-}
+      if (rows.length > 0) {
+        const user = rows[0]
 
-Users.register = function (newUser, result) {
-  // Hacher le mot de passe avant de l'enregistrer dans la base de données
-  bcrypt.hash(newUser.password, 10, function (err, hash) {
-    if (err) {
-      return result(err, null)
-    }
-    newUser.password = hash
-
-    // Insérer l'utilisateur dans la base de données
-    const sql = "INSERT INTO users SET ?"
-    db.query(sql, newUser, function (err, res) {
-      if (err) {
-        console.log("error: ", err)
-        result(err, null)
+        bcrypt.compare(password, user.password, function (err, passwordMatch) {
+          if (err) {
+            console.error("Error comparing passwords:", err)
+            result(err, null)
+          } else {
+            if (passwordMatch) {
+              console.log("Login successful!")
+              result(null, user)
+            } else {
+              console.log("Incorrect password")
+              result(null, false)
+            }
+          }
+        })
       } else {
-        const token = jwt.sign({ id: res.insertId }, process.env.SECRET_KEY, { expiresIn: "24h" })
-        result(null, { id: res.insertId, token })
+        console.log("User not found")
+        result(null, null)
       }
-    })
+    }
   })
 }
 
