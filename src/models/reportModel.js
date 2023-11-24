@@ -10,8 +10,8 @@ var Reports = function (reports) {
 
 // NOTE Create Report
 Reports.createReport = function (newReport, result) {
-  const sql = "INSERT INTO reports (subject, description, reportedBy, reportDate) VALUES (?, ?, ?, ?)"
-  db.query(sql, [newReport.subject, newReport.description, newReport.reportedBy, newReport.reportDate], function (err, res) {
+  const sql = "INSERT INTO reports (subject, description, reportedBy) VALUES (?, ?, ?)"
+  db.query(sql, [newReport.subject, newReport.description, newReport.reportedBy], function (err, res) {
     if (err) {
       console.log("error: ", err)
       result(err, null)
@@ -22,22 +22,6 @@ Reports.createReport = function (newReport, result) {
   })
 }
 
-// const getAllReports = async () => {
-//   const sql = `SELECT * FROM reports`
-//   const [rows] = await db.execute(sql)
-//   return rows
-// }
-
-// const getReport = async (reportId) => {
-//   const sql = `SELECT * FROM reports WHERE id = ?`
-//   const [rows] = await db.execute(sql, [reportId])
-//   return rows[0]
-// }
-
-// const deleteReport = async (reportId) => {
-//   const sql = `DELETE FROM reports WHERE id = ?`
-//   await db.execute(sql, [reportId])
-// }
 Reports.getReport = function (reportId, result) {
   const sql = "SELECT * FROM reports WHERE id = ?"
   db.query(sql, reportId, function (err, res) {
