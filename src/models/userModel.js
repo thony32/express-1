@@ -69,49 +69,7 @@ Users.createUser = function (newUser, result) {
   })
 }
 
-// const createUser = async (userData) => {
-//   const { username, email, fullName, password, role } = userData
-//   const sql = `INSERT INTO users (username, email, fullName, password , role) VALUES (?, ?, ?, ? , ?)`
-//   await db.execute(sql, [username, email, fullName, password, role])
-// }
-
-Users.updateUser = function (userId, user, result) {
-  const sql = "UPDATE users SET username = ?, email = ?, fullName = ?, password = ?, role = ?, createdAt = ? WHERE id = ?"
-  db.query(sql, [user.username, user.email, user.fullName, user.password, user.role, user.createdAt, userId], function (err, res) {
-    if (err) {
-      console.log("error: ", err)
-      result(null, err)
-    } else {
-      console.log("user updated: ", userId)
-      result(null, res)
-    }
-  })
-}
-
-// const updateUser = async (userId, updateData) => {
-//   const { username, email, fullName, password } = updateData
-//   const sql = `UPDATE users SET username = ?, email = ?, fullName = ?, password = ? WHERE id = ?`
-//   await db.execute(sql, [username, email, fullName, password, userId])
-// }
-
-Users.deleteUser = function (userId, result) {
-  const sql = "DELETE FROM users WHERE id = ?"
-  db.query(sql, [userId], function (err, res) {
-    if (err) {
-      console.log("error: ", err)
-      result(null, err)
-    } else {
-      console.log("user deleted: ", userId)
-      result(null, res)
-    }
-  })
-}
-
-// const deleteUser = async (userId) => {
-//   const sql = `DELETE FROM users WHERE id = ?`
-//   await db.execute(sql, [userId])
-// }
-
+// NOTE: Get user by username done
 Users.getUser = function (username, result) {
   const sql = "SELECT * FROM users WHERE username LIKE ?"
   const patternUsername = `%${username}%`
