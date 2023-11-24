@@ -60,14 +60,20 @@ Users.register = function (newUser, result) {
 }
 
 Users.createUser = function (newUser, result) {
-  const sql = "INSERT INTO users (username, email, fullName, password , role) VALUES (?, ?, ?, ?, ?)"
-  db.query(sql, [newUser.username, newUser.email, newUser.fullName, newUser.password, newUser.role], function (err, res) {
+  bcrypt.hash(newUser.password, 10, function (err, hash) {
     if (err) {
-      console.log("error: ", err)
-      result(err, null)
+      console.error("Error hashing password:", err)
     } else {
-      console.log("new user created: ", res.insertId)
-      result(null, res.insertId)
+      const sql = "INSERT INTO users (username, email, fullName, password , role) VALUES (?, ?, ?, ?, ?)"
+      db.query(sql, [newUser.username, newUser.email, newUser.fullName, hash, newUser.role], function (err, res) {
+        if (err) {
+          console.log("error: ", err)
+          result(err, null)
+        } else {
+          console.log("new user created: ", res.insertId)
+          result(null, res.insertId)
+        }
+      })
     }
   })
 }
