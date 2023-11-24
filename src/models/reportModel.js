@@ -8,7 +8,7 @@ var Reports = function (reports) {
   this.reportDate = reports.reportDate
 }
 
-// NOTE Create Report
+// NOTE: Create Report
 Reports.createReport = function (newReport, result) {
   const sql = "INSERT INTO reports (subject, description, reportedBy) VALUES (?, ?, ?)"
   db.query(sql, [newReport.subject, newReport.description, newReport.reportedBy], function (err, res) {
@@ -22,6 +22,8 @@ Reports.createReport = function (newReport, result) {
   })
 }
 
+// NOTE: Get Report by id
+
 Reports.getReport = function (reportId, result) {
   const sql = "SELECT * FROM reports WHERE id = ?"
   db.query(sql, reportId, function (err, res) {
@@ -34,6 +36,8 @@ Reports.getReport = function (reportId, result) {
     }
   })
 }
+
+// NOTE: Get all reports
 
 Reports.getAllReports = function (result) {
   const sql = "SELECT * FROM reports"
