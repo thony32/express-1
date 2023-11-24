@@ -14,6 +14,8 @@ var Users = function (users) {
   this.createdAt = users.createdAt
 }
 
+// NOTE: Login done
+
 Users.login = function (usernameOrEmail, password, result) {
   const sql = "SELECT * FROM users WHERE username = ? OR email = ?"
   db.query(sql, [usernameOrEmail, usernameOrEmail], function (err, rows) {
@@ -45,6 +47,8 @@ Users.login = function (usernameOrEmail, password, result) {
     }
   })
 }
+
+// NOTE: Registration done
 
 Users.createUser = function (newUser, result) {
   bcrypt.hash(newUser.password, 10, function (err, hash) {
@@ -122,11 +126,7 @@ Users.getUser = function (username, result) {
   })
 }
 
-// const getUser = async (userId) => {
-//   const sql = `SELECT * FROM users WHERE id = ?`
-//   const [rows] = await db.execute(sql, [userId])
-//   return rows[0]
-// }
+// NOTE: Get all users done
 
 Users.getAllUsers = function (result) {
   const sql = "SELECT * FROM users"
