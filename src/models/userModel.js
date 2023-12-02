@@ -16,16 +16,15 @@ var Users = function (users) {
 
 // NOTE: Login done
 
-Users.login = function (usernameOrEmail, password, result) {
-  const sql = "SELECT * FROM users WHERE username = ? OR email = ?"
-  db.query(sql, [usernameOrEmail, usernameOrEmail], function (err, rows) {
+Users.login = function (username, password, result) {
+  const sql = "SELECT * FROM users WHERE username = ?"
+  db.query(sql, [username], function (err, rows) {
     if (err) {
       console.error("Error retrieving user:", err)
       result(err, null)
     } else {
       if (rows.length > 0) {
         const user = rows[0]
-
         bcrypt.compare(password, user.password, function (err, passwordMatch) {
           if (err) {
             console.error("Error comparing passwords:", err)
