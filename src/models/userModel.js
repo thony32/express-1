@@ -86,7 +86,7 @@ Users.getUser = function (username, result) {
 // NOTE: Get all users done
 
 Users.getAllUsers = function (result) {
-  const sql = "SELECT * FROM users"
+  const sql = "SELECT * FROM users where role = 'user'"
   db.query(sql, function (err, res) {
     if (err) {
       console.log("error: ", err)
